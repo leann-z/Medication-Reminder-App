@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct PillMinderApp: App {
+    
+    @StateObject var shelvesviewModel: ShelvesviewModel
+        
+        init() {
+            _shelvesviewModel = StateObject(wrappedValue: ShelvesviewModel())
+        }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                ContentView()
+            }.environmentObject(shelvesviewModel)
+           
         }
     }
 }

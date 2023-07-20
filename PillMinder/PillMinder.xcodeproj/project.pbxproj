@@ -7,15 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E791EE72A5DDDA300593DBE /* ItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E791EE62A5DDDA300593DBE /* ItemModel.swift */; };
+		0E791EE92A5EF47200593DBE /* ShelvesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E791EE82A5EF47200593DBE /* ShelvesView.swift */; };
+		0E791EEC2A5F04DB00593DBE /* ShelvesviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E791EEB2A5F04DB00593DBE /* ShelvesviewModel.swift */; };
+		0E791EF02A65C63D00593DBE /* EditmedicineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E791EEF2A65C63D00593DBE /* EditmedicineView.swift */; };
 		0EA755652A487C540032244A /* PillMinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA755642A487C540032244A /* PillMinderApp.swift */; };
 		0EA755672A487C540032244A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA755662A487C540032244A /* ContentView.swift */; };
 		0EA755692A487C550032244A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0EA755682A487C550032244A /* Assets.xcassets */; };
 		0EA7556D2A487C550032244A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0EA7556C2A487C550032244A /* Preview Assets.xcassets */; };
 		0ECB89A42A4E18DD0079B24D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECB89A32A4E18DC0079B24D /* LoginView.swift */; };
 		0ECB89A62A4E351C0079B24D /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECB89A52A4E351C0079B24D /* SignupView.swift */; };
+		0ECB89A82A5316ED0079B24D /* HomescreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECB89A72A5316ED0079B24D /* HomescreenView.swift */; };
+		0ECB89AC2A5752E60079B24D /* AddmedicineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECB89AB2A5752E60079B24D /* AddmedicineView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E791EE62A5DDDA300593DBE /* ItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemModel.swift; sourceTree = "<group>"; };
+		0E791EE82A5EF47200593DBE /* ShelvesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelvesView.swift; sourceTree = "<group>"; };
+		0E791EEB2A5F04DB00593DBE /* ShelvesviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelvesviewModel.swift; sourceTree = "<group>"; };
+		0E791EEF2A65C63D00593DBE /* EditmedicineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditmedicineView.swift; sourceTree = "<group>"; };
 		0EA755612A487C540032244A /* PillMinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PillMinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0EA755642A487C540032244A /* PillMinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillMinderApp.swift; sourceTree = "<group>"; };
 		0EA755662A487C540032244A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -24,6 +34,8 @@
 		0EA7556C2A487C550032244A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0ECB89A32A4E18DC0079B24D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		0ECB89A52A4E351C0079B24D /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
+		0ECB89A72A5316ED0079B24D /* HomescreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomescreenView.swift; sourceTree = "<group>"; };
+		0ECB89AB2A5752E60079B24D /* AddmedicineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddmedicineView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +49,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E791EE42A5DDD6100593DBE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0EA755662A487C540032244A /* ContentView.swift */,
+				0ECB89A52A4E351C0079B24D /* SignupView.swift */,
+				0ECB89A32A4E18DC0079B24D /* LoginView.swift */,
+				0ECB89A72A5316ED0079B24D /* HomescreenView.swift */,
+				0ECB89AB2A5752E60079B24D /* AddmedicineView.swift */,
+				0E791EE82A5EF47200593DBE /* ShelvesView.swift */,
+				0E791EEF2A65C63D00593DBE /* EditmedicineView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0E791EE52A5DDD6700593DBE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0E791EE62A5DDDA300593DBE /* ItemModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0E791EEA2A5F04A700593DBE /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				0E791EEB2A5F04DB00593DBE /* ShelvesviewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		0EA755582A487C540032244A = {
 			isa = PBXGroup;
 			children = (
@@ -57,9 +99,9 @@
 			isa = PBXGroup;
 			children = (
 				0EA755642A487C540032244A /* PillMinderApp.swift */,
-				0EA755662A487C540032244A /* ContentView.swift */,
-				0ECB89A32A4E18DC0079B24D /* LoginView.swift */,
-				0ECB89A52A4E351C0079B24D /* SignupView.swift */,
+				0E791EE52A5DDD6700593DBE /* Model */,
+				0E791EEA2A5F04A700593DBE /* ViewModel */,
+				0E791EE42A5DDD6100593DBE /* Views */,
 				0EA755682A487C550032244A /* Assets.xcassets */,
 				0EA7556A2A487C550032244A /* PillMinder.entitlements */,
 				0EA7556B2A487C550032244A /* Preview Content */,
@@ -145,10 +187,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E791EEC2A5F04DB00593DBE /* ShelvesviewModel.swift in Sources */,
 				0ECB89A62A4E351C0079B24D /* SignupView.swift in Sources */,
+				0E791EE72A5DDDA300593DBE /* ItemModel.swift in Sources */,
 				0ECB89A42A4E18DD0079B24D /* LoginView.swift in Sources */,
 				0EA755672A487C540032244A /* ContentView.swift in Sources */,
+				0ECB89A82A5316ED0079B24D /* HomescreenView.swift in Sources */,
+				0ECB89AC2A5752E60079B24D /* AddmedicineView.swift in Sources */,
 				0EA755652A487C540032244A /* PillMinderApp.swift in Sources */,
+				0E791EF02A65C63D00593DBE /* EditmedicineView.swift in Sources */,
+				0E791EE92A5EF47200593DBE /* ShelvesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
