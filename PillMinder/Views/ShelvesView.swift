@@ -30,8 +30,11 @@ struct ShelvesView: View {
                 .overlay(Text(item.name).font(.custom(FontsManager.Avenir.regular, size: 30)))
                 .contextMenu {
                     Button(action: {
-                        if let index = shelvesviewModel.items.firstIndex(of: item) {
-                            shelvesviewModel.deleteItem(indexSet: IndexSet([index]))
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7){
+                            //delete
+                            if let index = shelvesviewModel.items.firstIndex(of: item) {
+                                shelvesviewModel.deleteItem(indexSet: IndexSet([index]))
+                            }
                         }
                     }) {
                         Label("Delete", systemImage: "trash")

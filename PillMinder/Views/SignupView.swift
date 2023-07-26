@@ -11,6 +11,8 @@ struct SignupView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     
+    @EnvironmentObject var shelvesviewModel: ShelvesviewModel
+    
     
     var body: some View {
         
@@ -53,7 +55,10 @@ struct SignupView: View {
                     HStack {
                         Image(systemName: "envelope").padding().foregroundColor(.gray)
                         
-                        TextField("Email", text: $email).padding().font(.custom(FontsManager.Avenir.light, size: 17))
+                        TextField("Email", text: $email)
+                            .disableAutocorrection(true).autocapitalization(.none)
+                                .padding()
+                                .font(.custom(FontsManager.Avenir.light, size: 17))
                     }.overlay(Divider().frame(width: 300), alignment: .bottom)
                     
                     
@@ -61,7 +66,7 @@ struct SignupView: View {
                     HStack {
                         Image(systemName: "key").padding().foregroundColor(.gray)
                         
-                        SecureField("Password", text: $password).padding().font(.custom(FontsManager.Avenir.light, size: 17))
+                        SecureField("Password", text: $password).disableAutocorrection(true).autocapitalization(.none).padding().font(.custom(FontsManager.Avenir.light, size: 17))
                     }.overlay(Divider().frame(width: 300), alignment: .bottom)
                     
                     
@@ -72,7 +77,15 @@ struct SignupView: View {
                     Spacer().frame(height: 50)
                     
                     
-                    NavigationLink(destination: HomescreenView().navigationBarBackButtonHidden(true)) {
+                    NavigationLink(destination: HomescreenView().onAppear {
+                        
+                        guard !email.isEmpty, !password.isEmpty else {
+                            return
+                        }
+                        
+                        shelvesviewModel.signUp(email: email, password: password)
+                        
+                    }.navigationBarBackButtonHidden(true)) {
                         
                                 Text("Sign up                        ")
                             .font(.custom(FontsManager.Avenir.heavy, size: 30))
@@ -82,6 +95,7 @@ struct SignupView: View {
                                     .background(Color("beige"))
                                     .cornerRadius(40)
                                     .padding(.bottom, 10)
+                                    
                             }
                         
                     

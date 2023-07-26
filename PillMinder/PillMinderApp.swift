@@ -7,6 +7,17 @@
 
 import SwiftUI
 import SwiftUIIntrospect
+import Firebase
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+
+    return true
+  }
+}
 
 enum AppScreen: String, CaseIterable {
     case contentView = "ContentView"
@@ -16,12 +27,16 @@ enum AppScreen: String, CaseIterable {
     case addmedicineView = "AddmedicineView"
     case shelvesView = "ShelvesView"
     case editmedicineView = "EditmedicineView"
+    case profileView = "ProfileView"
+    case profilepickerView = "ProfilePickerView"
     // Add more screens as needed
 }
 
 
 @main
 struct PillMinderApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     @StateObject var shelvesviewModel: ShelvesviewModel
     
@@ -80,6 +95,14 @@ struct PillMinderApp: App {
                     NavigationView {
                         let selectedItem = shelvesviewModel.items.first ?? ItemModel(name: "", freq: "", time: .none, color: .clear)
                         EditmedicineView(item: selectedItem)
+                    }.environmentObject(shelvesviewModel)
+                case .profileView:
+                    NavigationView {
+                        ProfileView()
+                    }.environmentObject(shelvesviewModel)
+                case .profilepickerView:
+                    NavigationView {
+                        ProfilePickerView()
                     }.environmentObject(shelvesviewModel)
                 }
             } else {

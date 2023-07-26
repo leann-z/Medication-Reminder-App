@@ -6,13 +6,22 @@
 // Main screen
 
 import SwiftUI
+import GoogleSignIn
+import Firebase
 
 struct ContentView: View {
     let notify = NotificationHandler()
+    @EnvironmentObject var shelvesviewModel: ShelvesviewModel
     
     var body: some View {
         
         NavigationView {
+           
+            if shelvesviewModel.isSignedIn {
+                HomescreenView()
+            } else {
+                LoginView()
+            }
             
             ZStack {
                 Color("creme").ignoresSafeArea() // background color

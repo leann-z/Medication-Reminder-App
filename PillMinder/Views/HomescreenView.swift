@@ -23,14 +23,12 @@ struct HomescreenView: View {
                     HStack {
                         Spacer().frame(width: 300)
                         
-                        Button(action: {
-                            // Handle the click action here
-                            print("Image clicked!")
-                        }) {
-                            
-                            Image(systemName: "person.circle.fill").resizable().frame(width: 50, height: 50).foregroundColor(Color("beige"))
-                            
-                        }
+                        NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) { // Wrap the Image with NavigationLink
+                                            Image(systemName: "person.circle.fill")
+                                                .resizable()
+                                                .frame(width: 50, height: 50)
+                                                .foregroundColor(Color("beige"))
+                                        }
                     }
                     
                     
