@@ -13,7 +13,10 @@ struct HomescreenView: View {
     @EnvironmentObject var shelvesviewModel: ShelvesviewModel
     
   
+    
+  
     var body: some View {
+       
         NavigationView {
             ZStack {
                 Color("creme").ignoresSafeArea()
@@ -21,6 +24,7 @@ struct HomescreenView: View {
                 VStack {
                     
                     HStack {
+                       
                         Spacer().frame(width: 300)
                         
                         NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) { // Wrap the Image with NavigationLink
@@ -143,7 +147,6 @@ struct HomescreenView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             HomescreenView()
-        }.environmentObject(ShelvesviewModel())
+        }.environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
     }
 }
-

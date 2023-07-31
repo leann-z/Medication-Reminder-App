@@ -8,20 +8,51 @@
 import SwiftUI
 import GoogleSignIn
 import Firebase
+import FirebaseAuth
+import GoogleSignInSwift
+
+
+struct GoogleSignInResultModel {
+    let idToken: String
+    let accessToken: String
+}
+
+@MainActor
+final class AuthenticationViewModel: ObservableObject {
+    
+    func SignInGoogle() async throws {
+        
+        guard let topVC = Utilities.shared.topViewController() else {
+            throw URLError(.cannotFindHost)
+        }
+        let GIDSignInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: topVC)
+        
+        guard let idToken: String = GIDSignInResult.user.idToken?.tokenString else {
+            throw URLError(.badServerResponse)
+        }
+        
+        let accessToken: String = GIDSignInResult.user.accessToken.tokenString
+        
+        let tokens = GoogleSignInResultModel(idToken: idToken, accessToken: accessToken)
+        try await AuthenticationHandler.shared.signInWithGoogle(tokens: tokens)
+    }
+    
+}
 
 struct ContentView: View {
+    @StateObject private var authenticationviewmodel = AuthenticationViewModel()
+    
     let notify = NotificationHandler()
     @EnvironmentObject var shelvesviewModel: ShelvesviewModel
+    
+    @Binding var isUserSignedIn: Bool
+    
     
     var body: some View {
         
         NavigationView {
            
-            if shelvesviewModel.isSignedIn {
-                HomescreenView()
-            } else {
-                LoginView()
-            }
+           
             
             ZStack {
                 Color("creme").ignoresSafeArea() // background color
@@ -70,33 +101,44 @@ struct ContentView: View {
                 
                 VStack {
                     
-                    Spacer()
+                    Spacer().frame(height: 400)
                     
-                    NavigationLink(destination: LoginView().navigationBarBackButtonHidden(true)) {
+//                    NavigationLink(destination: LoginView().navigationBarBackButtonHidden(true)) {
+//
+//                            Text("Log in                        ")
+//                            .font(.custom(FontsManager.Avenir.heavy, size: 30))
+//                                .fontWeight(.bold)
+//                                .foregroundColor(.white)
+//                                .padding()
+//                                .background(Color("lightnavy"))
+//                                .cornerRadius(40)
+//                                .padding(.bottom, 10)
+//                    }.onTapGesture {
+//
+//                    }
+//
+//
+//                    NavigationLink(destination: SignupView().navigationBarBackButtonHidden(true)) {
+//                        Text("Sign up                    ")
+//                            .font(.custom(FontsManager.Avenir.heavy, size: 30))
+//                            .fontWeight(.bold)
+//                            .foregroundColor(.white)
+//                            .padding()
+//                            .background(Color("darknavy"))
+//                            .cornerRadius(40)
+//                            .padding(.bottom, 10)
+//                    }
                     
-                            Text("Log in                        ")
-                            .font(.custom(FontsManager.Avenir.heavy, size: 30))
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color("lightnavy"))
-                                .cornerRadius(40)
-                                .padding(.bottom, 10)
-                    }.onTapGesture {
-                       
-                    }
-                                   
-                    
-                    NavigationLink(destination: SignupView().navigationBarBackButtonHidden(true)) {
-                        Text("Sign up                    ")
-                            .font(.custom(FontsManager.Avenir.heavy, size: 30))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color("darknavy"))
-                            .cornerRadius(40)
-                            .padding(.bottom, 10)
-                    }
+                    GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(scheme: .light, style: .wide, state: .normal)) {
+                        Task {
+                            do {
+                                try await authenticationviewmodel.SignInGoogle()
+                                    isUserSignedIn = true
+                            } catch {
+                               print(error)
+                            }
+                        }
+                    }.padding()
                         
                     }
                     
@@ -121,6 +163,11 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environmentObject(ShelvesviewModel())
+        let isUserSignedIn = Binding<Bool>(
+                    get: { false }, // Set the initial value to false for the preview
+                    set: { _ in }
+                )
+
+        ContentView(isUserSignedIn: isUserSignedIn).environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
     }
 }

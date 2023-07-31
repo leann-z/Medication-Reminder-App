@@ -63,7 +63,24 @@ struct AddmedicineView: View {
                 
                 VStack {
                     
+                    VStack {
+                        
+                        HStack {
+                            
+                            NavigationLink(destination: HomescreenView().navigationBarBackButtonHidden(true)) {
+                                Image(systemName: "house").resizable()
+                                    .frame(width: 25, height: 25).foregroundColor(.black)
+                            }
+                            
+                            Spacer().frame(width: 300)
+                        }
+                        
+
+                    }
+                    
                     Spacer().frame(height: 90)
+                    
+                   
                     
                     Text("Add New Medicine").font(.custom(FontsManager.Avenir.heavy, size: 35)).fontWeight(.semibold)
                     
@@ -172,7 +189,7 @@ struct AddmedicineView: View {
            
 
         static var previews: some View {
-            AddmedicineView().environmentObject(ShelvesviewModel())
+            AddmedicineView().environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
         }
     }
 }

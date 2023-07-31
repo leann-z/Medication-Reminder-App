@@ -21,6 +21,10 @@ struct EditmedicineView: View {
     @State var editedFreq: String = ""
     @State var editedTime: Date = Date()
     
+    // alerts
+    @State var alertTitle: String = ""
+    @State var showAlert: Bool = false
+    
     
     let reminderFrequencies = ["Daily", "Weekdays", "Weekends", "Biweekly","Monthly"]
     
@@ -30,6 +34,20 @@ struct EditmedicineView: View {
                 Color("creme").ignoresSafeArea()
                 
                 VStack {
+                    VStack {
+                        
+                        HStack {
+                            
+                            NavigationLink(destination: HomescreenView().navigationBarBackButtonHidden(true)) {
+                                Image(systemName: "house").resizable()
+                                    .frame(width: 25, height: 25).foregroundColor(.black)
+                            }
+                            
+                            Spacer().frame(width: 300)
+                        }
+                        
+
+                    }
                     
                     Spacer().frame(height: 90)
                     
@@ -83,7 +101,7 @@ struct EditmedicineView: View {
                         
                         
                     }.scrollContentBackground(.hidden)
-                    
+                        .alert(isPresented: $showAlert, content: getAlert)
                 }
             }
         }
@@ -94,13 +112,46 @@ struct EditmedicineView: View {
         self.item.freq = editedFreq
         self.item.time = editedTime
         
-        shelvesviewModel.updateItem(item: item.wrappedValue)
-        
-        notify.sendNotification(time: editedTime, freq: editedFreq, type: "time", title: editedName, body: "It's time to take your medicine!")
-        
-        presentationMode.wrappedValue.dismiss()
+        if validateInput() {
+            
+            shelvesviewModel.updateItem(item: item.wrappedValue)
+            
+            notify.sendNotification(time: editedTime, freq: editedFreq, type: "time", title: editedName, body: "It's time to take your medicine!")
+            
+            presentationMode.wrappedValue.dismiss()
+        }
     }
+    func getAlert() -> Alert {
+        return Alert(title: Text(alertTitle))
+    }
+    func validateInput() -> Bool {
+            if editedName.count < 1 {
+                // Show an error alert or update UI to indicate an error
+               alertTitle = "Your medicine name must be at least 1 character."
+                showAlert.toggle()
+                return false
+            }
+            
+            if editedFreq.isEmpty {
+                // Show an error alert or update UI to indicate an error
+                alertTitle = "Please pick a frequency."
+                 showAlert.toggle()
+                return false
+            }
+            
+            if editedTime == Date() {
+                // Show an error alert or update UI to indicate an error
+                alertTitle = "Please pick a time."
+                 showAlert.toggle()
+                return false
+            }
+            
+            // Perform additional validation checks if needed
+            
+            return true
+        }
 }
+
 
 
 
@@ -109,6 +160,6 @@ struct EditmedicineView_Previews: PreviewProvider {
     
     static var previews: some View {
         
-        EditmedicineView(item: item1).environmentObject(ShelvesviewModel())
+        EditmedicineView(item: item1).environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
     }
 }

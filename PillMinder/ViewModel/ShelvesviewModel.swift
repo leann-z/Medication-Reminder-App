@@ -8,8 +8,27 @@
 import Foundation
 import FirebaseAuth
 
+
+
+extension String {
+    func isValid() -> Bool {
+             let regex = try! NSRegularExpression(pattern: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$", options: .caseInsensitive)
+
+        return regex.firstMatch(in: self, range: NSRange(location: 0, length: count)) != nil
+        }
+    
+    func isValidPassword(password: String) -> Bool {
+            let passwordRegEx = "^(?=.*[a-z])(?=.*[$@$#!%*?&])[A-Za-z\\d$@$#!%*?&]{6,16}"
+            let passwordTest = NSPredicate(format:"SELF MATCHES %@", passwordRegEx)
+            let result = passwordTest.evaluate(with: password)
+            return result
+        }
+    
+}
+
 class ShelvesviewModel: ObservableObject {
     @Published var someStateProperty: String = ""
+    @Published private var errorMessage = ""
     
     let auth = Auth.auth()
     
@@ -24,6 +43,11 @@ class ShelvesviewModel: ObservableObject {
             guard result != nil, error == nil else {
                 return
             }
+            if let error = error {
+                print(error)
+                return
+            }
+            
             // success!
             DispatchQueue.main.async {
                 self.signedIn = true

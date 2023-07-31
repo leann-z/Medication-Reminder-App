@@ -28,7 +28,7 @@ struct ProfileView: View {
                                                         .font(.title)
                                                 })
                                                 .padding(8)
-                                                , alignment: .bottomTrailing 
+                                                , alignment: .bottomTrailing
                                             ).sheet(isPresented: $isSheetPresented, content: {
                                                 ProfilePickerView() // Present the View when the sheet is triggered
                                             })
@@ -50,6 +50,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView().environmentObject(ShelvesviewModel())
+        ProfileView().environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
     }
 }

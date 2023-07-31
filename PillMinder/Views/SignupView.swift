@@ -128,4 +128,3 @@ struct SignupView_Previews: PreviewProvider {
         SignupView().environmentObject(ShelvesviewModel())
     }
 }
-

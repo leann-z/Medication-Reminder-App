@@ -77,7 +77,7 @@ struct ShelvesView: View {
             Group {
                 ShelvesView(item: item1)
                 ShelvesView(item: item2)
-            }.previewLayout(.sizeThatFits).environmentObject(ShelvesviewModel())
+            }.previewLayout(.sizeThatFits).environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
             
         }
     }
