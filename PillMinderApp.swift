@@ -41,6 +41,7 @@ enum SignInState: Equatable {
 
 
 
+
 @main
 struct PillMinderApp: App {
     
@@ -51,6 +52,7 @@ struct PillMinderApp: App {
     @StateObject var shelvesviewModel: ShelvesviewModel
     
     @State private var showContentView: Bool = false
+    
     
     
     

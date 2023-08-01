@@ -31,10 +31,11 @@ extension Date: RawRepresentable {
 }
 
 
+
 struct AddmedicineView: View {
     
     let notify = NotificationHandler()
-    
+   
     
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var shelveviewModel: ShelvesviewModel
@@ -139,7 +140,9 @@ struct AddmedicineView: View {
                 
             }
             
+            
         }
+        
     }
     
     func saveReminder() {
@@ -148,6 +151,8 @@ struct AddmedicineView: View {
             shelveviewModel.addItem(name: medicineName, freq: reminderFrequency, time: timeOfDay)
             
             notify.sendNotification(time: timeOfDay, freq: reminderFrequency, type: "time", title: medicineName, body: "It's time to take your medicine!")
+            
+            
             
             presentationMode.wrappedValue.dismiss()
         }
@@ -182,14 +187,19 @@ struct AddmedicineView: View {
             
             return true
         }
+    func saveNotificationCount(_ count: Int) {
+        UserDefaults.standard.set(count, forKey: "NotificationCountKey")
+    }
+
+    func loadNotificationCount() -> Int {
+        return UserDefaults.standard.integer(forKey: "NotificationCountKey")
+    }
     
     struct AddmedicineView_Previews: PreviewProvider {
     
-            
-           
-
         static var previews: some View {
             AddmedicineView().environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
+            
         }
     }
 }

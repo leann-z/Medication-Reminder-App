@@ -7,13 +7,19 @@
 
 import SwiftUI
 import NavigationTransitions
+import Firebase
+import GoogleSignIn
 
 struct HomescreenView: View {
      
     @EnvironmentObject var shelvesviewModel: ShelvesviewModel
     
-  
+    var name = Auth.auth().currentUser?.displayName
     
+    let isUserSignedIn = Binding<Bool>(
+                get: { false }, // Set the initial value to false for the preview
+                set: { _ in }
+            )
   
     var body: some View {
        
@@ -81,9 +87,9 @@ struct HomescreenView: View {
                             
                             if (shelvesviewModel.items.isEmpty) {
                                 
-                                Text("Nothing to see yet... click + now!").font(.custom(FontsManager.Avenir.regular, size: 30))
+                                Text("No medicine to remind you to take yet... click + now!").font(.custom(FontsManager.Avenir.heavy, size: 30))
                                     .multilineTextAlignment(.center)
-                                    .foregroundColor(Color("darknavy")).padding().padding().padding()
+                                    .foregroundColor(Color("darknavy")).padding().padding().padding().fontWidth(.condensed)
                                 Spacer()
                             }
                             
@@ -115,32 +121,6 @@ struct HomescreenView: View {
         
     }
 
-struct UserIconView: View {
-    @Binding var userEmail: String
-
-    
-    var body: some View {
-        let firstLetter = String(userEmail.prefix(1)).uppercased()
-        
-        Text(firstLetter)
-            .font(.system(size: 40))
-            .frame(width: 60, height: 60)
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .clipShape(Circle())
-    }
-}
-
-extension AnyTransition {
-  static var fade: AnyTransition {
-    let insertion = AnyTransition.opacity.animation(.easeInOut(duration: 0.3))
-    let removal = AnyTransition.opacity.animation(.easeInOut(duration: 0.3))
-    return .asymmetric(insertion: insertion, removal: removal)
-  }
-}
-
-
-
 
 struct HomescreenView_Previews: PreviewProvider {
     
@@ -148,5 +128,7 @@ struct HomescreenView_Previews: PreviewProvider {
         NavigationView {
             HomescreenView()
         }.environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
+        
+       
     }
 }

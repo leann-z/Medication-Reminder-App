@@ -37,12 +37,30 @@ final class AuthenticationViewModel: ObservableObject {
         try await AuthenticationHandler.shared.signInWithGoogle(tokens: tokens)
     }
     
+    func saveSignInDate() {
+        let signInDate = Date()
+        UserDefaults.standard.set(signInDate, forKey: "UserSignInDate")
+    }
+    
+    func retrieveSignInDate() -> String? {
+        if let signInDate = UserDefaults.standard.object(forKey: "UserSignInDate") as? Date {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            formatter.timeStyle = .short
+
+            return formatter.string(from: signInDate)
+        } else {
+            return nil
+        }
+    }
+    
 }
 
 struct ContentView: View {
     @StateObject private var authenticationviewmodel = AuthenticationViewModel()
     
     let notify = NotificationHandler()
+    
     @EnvironmentObject var shelvesviewModel: ShelvesviewModel
     
     @Binding var isUserSignedIn: Bool
@@ -103,37 +121,14 @@ struct ContentView: View {
                     
                     Spacer().frame(height: 400)
                     
-//                    NavigationLink(destination: LoginView().navigationBarBackButtonHidden(true)) {
-//
-//                            Text("Log in                        ")
-//                            .font(.custom(FontsManager.Avenir.heavy, size: 30))
-//                                .fontWeight(.bold)
-//                                .foregroundColor(.white)
-//                                .padding()
-//                                .background(Color("lightnavy"))
-//                                .cornerRadius(40)
-//                                .padding(.bottom, 10)
-//                    }.onTapGesture {
-//
-//                    }
-//
-//
-//                    NavigationLink(destination: SignupView().navigationBarBackButtonHidden(true)) {
-//                        Text("Sign up                    ")
-//                            .font(.custom(FontsManager.Avenir.heavy, size: 30))
-//                            .fontWeight(.bold)
-//                            .foregroundColor(.white)
-//                            .padding()
-//                            .background(Color("darknavy"))
-//                            .cornerRadius(40)
-//                            .padding(.bottom, 10)
-//                    }
                     
                     GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(scheme: .light, style: .wide, state: .normal)) {
                         Task {
                             do {
                                 try await authenticationviewmodel.SignInGoogle()
                                     isUserSignedIn = true
+                                    
+                                
                             } catch {
                                print(error)
                             }
@@ -169,5 +164,7 @@ struct ContentView_Previews: PreviewProvider {
                 )
 
         ContentView(isUserSignedIn: isUserSignedIn).environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
+        
+        
     }
 }

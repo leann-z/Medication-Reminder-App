@@ -34,6 +34,8 @@ final class AuthenticationHandler {
         return auth.currentUser != nil
     }
 
+   
+    
     func getAuthenticatedUser() throws -> AuthDataResultModel {
         guard let user = auth.currentUser else {
             throw URLError(.badServerResponse)
@@ -61,3 +63,4 @@ extension AuthenticationHandler {
         return AuthDataResultModel(user: authDataResult.user)
     }
 }
+

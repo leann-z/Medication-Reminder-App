@@ -26,10 +26,13 @@ struct RootView: View {
     
     var body: some View {
         NavigationView {
-            if isUserSignedIn { // Step 3: Use NavigationView to handle navigation
+            if isUserSignedIn {
                         HomescreenView()
+                        .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.3))
                     } else {
-                        ContentView(isUserSignedIn: $isUserSignedIn) // Pass the @State variable to the SignInView
+                        ContentView(isUserSignedIn: $isUserSignedIn) .transition(.opacity) // Apply transition to the HomescreenView
+                            .animation(.easeInOut(duration: 0.3))
                     }
                 }
     }
@@ -37,10 +40,7 @@ struct RootView: View {
 
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
-        let isUserSignedIn = Binding<Bool>(
-                    get: { false }, // Set the initial value to false for the preview
-                    set: { _ in }
-                )
+        
         RootView().environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
     }
 }
