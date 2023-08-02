@@ -23,7 +23,8 @@ struct ProfileView: View {
     
     @StateObject private var viewModel = ProfileViewModel()
     
-   // @Binding var isUserSignedIn: Bool
+    @Environment(\.presentationMode) var presentationMode
+    
     
     
     var body: some View {
@@ -35,9 +36,10 @@ struct ProfileView: View {
                     
                     HStack {
                         
-                        NavigationLink(destination: HomescreenView().navigationBarBackButtonHidden(true)) {
-                            Image(systemName: "house").resizable()
-                                .frame(width: 25, height: 25).foregroundColor(.black)
+                        Button(action: {
+                            presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Label("", systemImage: "house").foregroundColor(.black)
                         }
                         
                         Spacer().frame(width: 300)
