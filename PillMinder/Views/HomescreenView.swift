@@ -20,6 +20,8 @@ struct HomescreenView: View {
                 get: { false }, // Set the initial value to false for the preview
                 set: { _ in }
             )
+
+    @State private var showAddMedicine = false // 🔹 State for sheet presentation
   
     var body: some View {
        
@@ -34,22 +36,26 @@ struct HomescreenView: View {
                         Spacer().frame(width: 300)
                         
                         NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) { // Wrap the Image with NavigationLink
-                                            Image(systemName: "person.circle.fill")
-                                                .resizable()
-                                                .frame(width: 50, height: 50)
-                                                .foregroundColor(Color("beige"))
-                                        }
+                            Image(systemName: "person.circle.fill")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(Color("beige"))
+                        }
                     }
                     
+                    Text("Hi! 👋")
+                        .fontWeight(.heavy)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        .padding()
+                        .font(.custom(FontsManager.Avenir.heavy, size: 40))
+                        .padding(.bottom, -20)
+                        .foregroundColor(Color("darknavy"))
                     
-                    
-                    Text("Hi! 👋").fontWeight(.heavy).frame(maxWidth: .infinity, alignment: .topLeading)
-                        .padding().font(.custom(FontsManager.Avenir.heavy, size: 40)).padding(.bottom, -20).foregroundColor(Color("darknavy"))
-                    
-                    
-                    
-                    Text("Welcome to PillMinder!").frame(maxWidth: .infinity, alignment: .topLeading)
-                        .padding().foregroundColor(.gray).font(.custom(FontsManager.Avenir.light, size: 16))
+                    Text("Welcome to PillMinder!")
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        .padding()
+                        .foregroundColor(.gray)
+                        .font(.custom(FontsManager.Avenir.light, size: 16))
                     
                     Spacer().frame(height: 550)
                     
@@ -60,75 +66,74 @@ struct HomescreenView: View {
                     Spacer().frame(height: 90)
                     
                     VStack {
-                        
                         HStack(spacing: -10) {
                             Group {
-                                Text("Your").padding(.leading, 20).foregroundColor(Color("darknavy"))
-                                Text("Medicine").fontWeight(.bold).frame(maxWidth: .infinity, alignment: .topLeading)
-                                    .padding().foregroundColor(Color("darknavy"))
-                                
-                            }.font(.custom(FontsManager.Avenir.light, size: 28))
-                            
+                                Text("Your")
+                                    .padding(.leading, 20)
+                                    .foregroundColor(Color("darknavy"))
+                                Text("Medicine")
+                                    .fontWeight(.bold)
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                                    .padding()
+                                    .foregroundColor(Color("darknavy"))
+                            }
+                            .font(.custom(FontsManager.Avenir.light, size: 28))
                             
                             Spacer()
                             
-                            NavigationLink(destination: AddmedicineView().navigationBarBackButtonHidden(true)) {
-                                Image(systemName: "plus").background(Color("beige")).font(.largeTitle).cornerRadius(15).padding(20).padding(.trailing, 40).foregroundColor(.white)
+                            // 🔹 Changed NavigationLink to a Button that triggers a sheet
+                            Button(action: { showAddMedicine = true }) {
+                                Image(systemName: "plus")
+                                    .background(Color("beige"))
+                                    .font(.largeTitle)
+                                    .cornerRadius(15)
+                                    .padding(20)
+                                    .padding(.trailing, 40)
+                                    .foregroundColor(.white)
                             }
                             
-                            
-                        }.padding(.top, 80)
-                        
+                        }
+                        .padding(.top, 80)
                     }
                         
-                        VStack {
-                            
-                            
-                            
-                            if (shelvesviewModel.items.isEmpty) {
-                                
-                                Text("No medicine to remind you to take yet... click + now!").font(.custom(FontsManager.Avenir.heavy, size: 30))
-                                    .multilineTextAlignment(.center)
-                                    .foregroundColor(Color("darknavy")).padding().padding().padding().fontWidth(.condensed)
-                                Spacer()
-                            }
-                            
-                            else {
-                                ScrollView {
-                                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                                        
-                                        ForEach(shelvesviewModel.items) { item in
-                                           
-                                            
-                                            ShelvesView(item: item)
-                                            
-                                            
-                                        }
-                                    }.padding()
+                    VStack {
+                        if (shelvesviewModel.items.isEmpty) {
+                            Text("No medicine to remind you to take yet... click + now!")
+                                .font(.custom(FontsManager.Avenir.heavy, size: 30))
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(Color("darknavy"))
+                                .padding()
+                                .padding()
+                                .padding()
+                                .fontWidth(.condensed)
+                            Spacer()
+                        } else {
+                            ScrollView {
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                                    ForEach(shelvesviewModel.items) { item in
+                                        ShelvesView(item: item)
+                                    }
                                 }
+                                .padding()
                             }
-                        
+                        }
                     }
                 
-            }
                 }
-                
-                
+            }
         }
-            
+        .sheet(isPresented: $showAddMedicine) {
+            AddmedicineView()
         }
-        
-        
     }
-
+}
 
 struct HomescreenView_Previews: PreviewProvider {
-    
     static var previews: some View {
         NavigationView {
             HomescreenView()
-        }.environmentObject(ShelvesviewModel()).environmentObject(UserSettings())
-        
-       
+        }
+        .environmentObject(ShelvesviewModel())
+        .environmentObject(UserSettings())
     }
 }
