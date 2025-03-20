@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-let colors = [ColorAsset(name: "lightgreen"), ColorAsset(name: "lightblue"), ColorAsset(name: "lightyellow")]
+let colors = [Color("lightgreen"), Color("lightblue"), Color("lightyellow")]
 var colorIndex = 0
 
 struct ItemModel: Identifiable, Codable {
@@ -16,22 +16,30 @@ struct ItemModel: Identifiable, Codable {
     var name: String
     var freq: String
     var time: Date?
+    var colorIndex: Int
     var color: Color {
-       let index = abs(id.hashValue) % colors.count
-       return colors[index].color
-     }
+        return colors[colorIndex]
+    }
+    var remindToRefill: Bool // 🔹 Store whether the refill reminder is enabled
+    var refillDate: Date? // 🔹 Store the refill
       
     
-    init(id: String = UUID().uuidString, name: String, freq: String, time: Date?, color: Color) {
+    init(id: String = UUID().uuidString, name: String, freq: String, time: Date?, colorIndex: Int? = nil, remindToRefill: Bool = false, refillDate: Date? = nil) {
         self.id = id
         self.name = name
         self.freq = freq
         self.time = time
         
+        // Assign a color index only when the item is first created
+        self.colorIndex = colorIndex ?? Int.random(in: 0..<colors.count)
+        
+        self.remindToRefill = remindToRefill
+        self.refillDate = refillDate
+        
     }
     
     func updateCompletion() -> ItemModel {
-        return ItemModel(id: id, name: name, freq: freq, time: time, color: color)
+        return ItemModel(id: id, name: name, freq: freq, time: time, colorIndex: colorIndex, remindToRefill: remindToRefill, refillDate: refillDate)
     }
 }
 
