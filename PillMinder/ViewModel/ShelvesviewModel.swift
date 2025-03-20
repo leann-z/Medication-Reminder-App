@@ -82,9 +82,10 @@ class ShelvesviewModel: ObservableObject {
         items.move(fromOffsets: from, toOffset: to)
     }
     
-    func addItem(name: String, freq: String, time: Date) {
-        let newItem = ItemModel(name: name, freq: freq, time: time, color: .clear)
+    func addItem(name: String, freq: String, time: Date, remindToRefill: Bool = false, refillDate: Date? = nil) {
+        let newItem = ItemModel(name: name, freq: freq, time: time, remindToRefill: remindToRefill, refillDate: refillDate)
         items.append(newItem)
+        saveItems()
     }
     
     func updateItem(item: ItemModel) {
