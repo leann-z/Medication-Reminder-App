@@ -43,19 +43,18 @@ struct AddmedicineView: View {
     // individual name, frequency, and time
     @State var medicineName: String = ""
     @State var reminderFrequency: String = ""
+    @State var customDays: Int = 2
     @State var timeOfDay: Date = Date()
+    
+    // refill reminder states
+    @State var remindToRefill: Bool = false
+    @State var refillDate: Date = Date()
     
     // alerts
     @State var alertTitle: String = ""
     @State var showAlert: Bool = false
     
-    
-    // example
-    
-   
-    
-    
-    let reminderFrequencies = ["Daily", "Weekdays", "Weekends", "Biweekly","Monthly"]
+    let reminderFrequencies = ["Daily", "Weekdays", "Weekends", "Every __ Days", "Biweekly"]
     
     var body: some View {
         NavigationView {
@@ -105,12 +104,32 @@ struct AddmedicineView: View {
                                         Text(frequency)
                                     }
                                 }
+                            .onChange(of: reminderFrequency) { newValue in
+                                                            if newValue != "Every __ Days" {
+                                                                customDays = 2 // Reset customDays when not using "Every X Days"
+                                                            }
+                                                        }
+    // 🔹 Show number selector when "Every X Days" is chosen
+                                if reminderFrequency == "Every __ Days" {
+                                    Stepper(value: $customDays, in: 1...30) {
+                                        Text("Repeat every \(customDays) days")
+                                    }
+                                }
                                     DatePicker(selection: $timeOfDay, displayedComponents: .hourAndMinute) {
                                         Text("Time").datePickerStyle(.compact)
                                             .labelsHidden()
-                                    
-                                    
                                 }
+                                
+            // 🔹 Refill Reminder Section
+                                  Section {
+                                      Toggle("Remind me when to refill", isOn: $remindToRefill)
+                                      
+                                      if remindToRefill {
+                                          DatePicker("Refill Date", selection: $refillDate, displayedComponents: .date)
+                                      }
+                                  }
+                                
+                                
                             }.listRowBackground(hidden())
                              
                             
@@ -147,18 +166,26 @@ struct AddmedicineView: View {
     }
     
     func saveReminder() {
+        print("🚀 saveReminder() called for \(medicineName)")
         //add validation
         if validateInput() {
-            shelveviewModel.addItem(name: medicineName, freq: reminderFrequency, time: timeOfDay)
+                   let finalFreq = reminderFrequency == "Every __ Days" ? "Every \(customDays) Days" : reminderFrequency
+                   
+                   shelveviewModel.addItem(name: medicineName, freq: finalFreq, time: timeOfDay)
+                   
+                   print("🔹 Calling sendNotification() for \(medicineName)")
+                   notify.sendNotification(time: timeOfDay, freq: finalFreq, type: "time", title: medicineName, body: "It's time to take your medicine!")
+                   
+                    // 🔹 Schedule refill reminder if enabled
+                        if remindToRefill {
+                            print("🔹 Calling scheduleRefillReminder() for \(medicineName)")
+                            notify.scheduleRefillReminder(date: refillDate, title: medicineName)
+                        }
             
-            notify.sendNotification(time: timeOfDay, freq: reminderFrequency, type: "time", title: medicineName, body: "It's time to take your medicine!")
-            
-            
-            
-            presentationMode.wrappedValue.dismiss()
-        }
-        
+                   presentationMode.wrappedValue.dismiss()
+               }
     }
+    
     func getAlert() -> Alert {
         return Alert(title: Text(alertTitle))
     }
@@ -183,6 +210,7 @@ struct AddmedicineView: View {
                  showAlert.toggle()
                 return false
             }
+        
             
             // Perform additional validation checks if needed
             

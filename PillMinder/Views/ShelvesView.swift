@@ -71,8 +71,8 @@ struct ShelvesView: View {
     
     struct ShelvesView_Previews: PreviewProvider {
         
-        static var item1 = ItemModel(name: "Accutane", freq: "Daily", time: .none, color: .clear)
-        static var item2 = ItemModel(name: "Zenatane", freq: "Monthly", time: .none, color: .clear)
+        static var item1 = ItemModel(name: "Accutane", freq: "Daily", time: .none)
+        static var item2 = ItemModel(name: "Zenatane", freq: "Monthly", time: .none)
         static var previews: some View {
             Group {
                 ShelvesView(item: item1)

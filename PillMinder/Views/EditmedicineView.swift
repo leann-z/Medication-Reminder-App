@@ -19,14 +19,18 @@ struct EditmedicineView: View {
     @State var item: ItemModel
     @State var editedName: String = ""
     @State var editedFreq: String = ""
+    @State var editedCustomDays: Int = 2
     @State var editedTime: Date = Date()
+    
+    @State var remindToRefill: Bool = false
+    @State var refillDate: Date = Date()
     
     // alerts
     @State var alertTitle: String = ""
     @State var showAlert: Bool = false
     
     
-    let reminderFrequencies = ["Daily", "Weekdays", "Weekends", "Biweekly","Monthly"]
+    let reminderFrequencies = ["Daily", "Weekdays", "Weekends", "Every __ Days","Biweekly"]
     
     var body: some View {
         NavigationView {
@@ -72,6 +76,17 @@ struct EditmedicineView: View {
                                         Text(frequency)
                                     }
                                 }
+                                .onChange(of: editedFreq) { newValue in
+                                  if newValue != "Every __ Days" {
+                                      editedCustomDays = 2 // Reset customDays if switching away
+                                  }
+                              }
+
+                              if editedFreq == "Every __ Days" {
+                                  Stepper(value: $editedCustomDays, in: 1...30) {
+                                      Text("Repeat every \(editedCustomDays) days")
+                                  }
+                              }
                                 DatePicker(selection: $editedTime, displayedComponents: .hourAndMinute) {
                                     Text("Time").datePickerStyle(.compact)
                                         .labelsHidden()
@@ -80,6 +95,13 @@ struct EditmedicineView: View {
                                 }
                             }.listRowBackground(hidden())
                             
+                            Section {
+                                Toggle("Remind me when to refill", isOn: $remindToRefill)
+                                
+                                if remindToRefill {
+                                    DatePicker("Refill Date", selection: $refillDate, displayedComponents: .date)
+                                }
+                            }.listRowBackground(hidden())
                             
                             
                             
@@ -117,6 +139,11 @@ struct EditmedicineView: View {
             shelvesviewModel.updateItem(item: item.wrappedValue)
             
             notify.sendNotification(time: editedTime, freq: editedFreq, type: "time", title: editedName, body: "It's time to take your medicine!")
+            
+            // 🔹 Update refill reminder if changed
+            if remindToRefill {
+                notify.scheduleRefillReminder(date: refillDate, title: editedName)
+            }
             
             presentationMode.wrappedValue.dismiss()
         }
@@ -156,7 +183,7 @@ struct EditmedicineView: View {
 
 
 struct EditmedicineView_Previews: PreviewProvider {
-    static var item1 = ItemModel(name: "Accutane", freq: "Daily", time: .none, color: .clear)
+    static var item1 = ItemModel(name: "Accutane", freq: "Daily", time: Date())
     
     static var previews: some View {
         
