@@ -30,6 +30,29 @@ struct EditmedicineView: View {
     
     let reminderFrequencies = ["Daily", "Weekdays", "Weekends", "Every __ Days", "Biweekly"]
     
+    // initializer to autofill the form with current info
+    init(item: ItemModel) {
+        self._item = State(initialValue: item)
+        self._editedName = State(initialValue: item.name)
+        self._editedTime = State(initialValue: item.time ?? Date())
+        self._remindToRefill = State(initialValue: item.remindToRefill ?? false)
+        self._refillDate = State(initialValue: item.refillDate ?? Date())
+
+        if item.freq.starts(with: "Every") && item.freq.contains("Days") {
+            let components = item.freq.components(separatedBy: " ")
+            if components.count > 1, let dayValue = Int(components[1]) {
+                self._editedFreq = State(initialValue: "Every __ Days")
+                self._editedCustomDays = State(initialValue: dayValue)
+            } else {
+                self._editedFreq = State(initialValue: item.freq) // Default case
+                self._editedCustomDays = State(initialValue: 2)
+            }
+        } else {
+            self._editedFreq = State(initialValue: item.freq) // Autofill for other frequencies
+            self._editedCustomDays = State(initialValue: 2) // Default if not "Every __ Days"
+        }
+    }
+    
     var body: some View {
         ZStack {
             Color("creme").ignoresSafeArea()
@@ -44,7 +67,7 @@ struct EditmedicineView: View {
                         Image(systemName: "xmark.circle.fill")
                             .resizable()
                             .frame(width: 30, height: 30)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color("lightnavy"))
                     }
                     .padding()
                     
@@ -134,12 +157,12 @@ struct EditmedicineView: View {
             
             notify.sendNotification(time: editedTime, freq: editedFreq, type: "time", title: editedName, body: "It's time to take your medicine!")
             
-            // 🔹 Update refill reminder if changed
+            // Update refill reminder if changed
             if remindToRefill {
                 notify.scheduleRefillReminder(date: refillDate, title: editedName)
             }
             
-            presentationMode.wrappedValue.dismiss() // 🔹 Close Sheet
+            presentationMode.wrappedValue.dismiss() // Close Sheet
         }
     }
     

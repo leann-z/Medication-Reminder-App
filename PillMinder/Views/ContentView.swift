@@ -10,6 +10,7 @@ import GoogleSignIn
 import Firebase
 import FirebaseAuth
 import GoogleSignInSwift
+import AuthenticationServices
 
 
 struct GoogleSignInResultModel {
@@ -36,6 +37,16 @@ final class AuthenticationViewModel: ObservableObject {
         let tokens = GoogleSignInResultModel(idToken: idToken, accessToken: accessToken)
         try await AuthenticationHandler.shared.signInWithGoogle(tokens: tokens)
     }
+    
+    func SignInApple(credential: ASAuthorizationAppleIDCredential) async throws {
+            guard let idTokenData = credential.identityToken,
+                  let idTokenString = String(data: idTokenData, encoding: .utf8) else {
+                throw URLError(.badServerResponse)
+            }
+            
+            let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nil)
+            try await AuthenticationHandler.shared.signInWithApple(credential: credential)
+        }
     
     func saveSignInDate() {
         let signInDate = Date()
@@ -65,37 +76,24 @@ struct ContentView: View {
     
     @Binding var isUserSignedIn: Bool
     
-    
-    
-    
     var body: some View {
-        
-        
         NavigationView {
-           
-           
-            
             ZStack {
+                
                 Color("creme").ignoresSafeArea() // background color
+                
                 Image("pills") //background image
                     .scaledToFill()
                     .edgesIgnoringSafeArea(.all)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 
-                
                 VStack {
-                    
-                    
-                    
-                    
                     
                     Text("PILLMINDER") //title of the app
                         .font(.custom(FontsManager.Avenir.heavy, size: 40))
                         .fontWeight(.heavy)
                         .foregroundColor(Color("darknavy"))
                         .multilineTextAlignment(.center).padding(.top, 20)
-                    
-                    
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top) //brings this specific vstack to the top
                 
                 VStack {
@@ -107,8 +105,6 @@ struct ContentView: View {
                         .padding(.bottom, 5)
                         .padding(.top, 80)
                     
-                    
-                    
                     Text("Get personalized notifications that remind you when to take your medication so you don’t have to worry again.")
                         .font(.custom(FontsManager.Avenir.heavy, size: 16))
                         .multilineTextAlignment(.center)
@@ -118,7 +114,6 @@ struct ContentView: View {
                         .padding()
                     
                 }
-                
                 
                 VStack {
                     
@@ -136,17 +131,35 @@ struct ContentView: View {
                                print(error)
                             }
                         }
-                    }.padding()
+                    }.frame(height: 50) // Set a fixed height for consistency
+                    .padding(.horizontal, 40)
+                    
+
+                    SignInWithAppleButton(.signIn) { request in
+                        request.requestedScopes = [.fullName, .email]
+                    } onCompletion: { result in
+                        switch result {
+                        case .success(let authResults):
+                            if let credential = authResults.credential as? ASAuthorizationAppleIDCredential {
+                                Task {
+                                    do {
+                                        try await authenticationviewmodel.SignInApple(credential: credential)
+                                        isUserSignedIn = true
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            }
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                        }
+                    }
+                    .frame(height: 50)
+                    .padding(.horizontal, 40)
+                    .signInWithAppleButtonStyle(.white)
                         
                     }
-                    
-                    
-                
-                
-                
-                
-                
-                
+                            
                 
             }
             

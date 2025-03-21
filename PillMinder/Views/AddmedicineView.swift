@@ -53,7 +53,10 @@ struct AddmedicineView: View {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
-                        Label("", systemImage: "house").foregroundColor(.black)
+                        Image(systemName: "xmark.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(Color("lightnavy"))
                     }
                     Spacer()
                 }
