@@ -6,9 +6,9 @@
 //
 
 import Foundation
-
 import Firebase
 import GoogleSignIn
+import AuthenticationServices
 
 struct AuthDataResultModel {
     let uid: String
@@ -61,6 +61,20 @@ extension AuthenticationHandler {
     func signIn(credential: AuthCredential) async throws -> AuthDataResultModel {
         let authDataResult = try await auth.signIn(with: credential)
         return AuthDataResultModel(user: authDataResult.user)
+    }
+}
+
+// Apple specific functions
+extension AuthenticationHandler {
+    
+    @discardableResult
+    func signInWithApple(credential: AuthCredential) async throws -> AuthDataResultModel {
+        do {
+            let authDataResult = try await auth.signIn(with: credential)
+            return AuthDataResultModel(user: authDataResult.user)
+        } catch {
+            throw error
+        }
     }
 }
 
