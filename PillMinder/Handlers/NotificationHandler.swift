@@ -25,71 +25,71 @@ class NotificationHandler {
         
         print("🚀 sendNotification() called for \(title) with frequency: \(freq)")
         
-        // Remove all previous notifications to avoid duplicates, um does this remove notifs for other medication?
-        center.removeAllPendingNotificationRequests()
+        // ❌ Only remove previous notifications for THIS medicine
+        center.removePendingNotificationRequests(withIdentifiers: notificationIdentifiers(for: title, freq: freq))
 
         let calendar = Calendar.current
         let timeComponents = calendar.dateComponents([.hour, .minute], from: time)
 
         var days: [Int] = []
 
-        // Map user-selected notification frequency to actual weekdays
         switch freq.lowercased() {
-        case "daily":
-            days = [1, 2, 3, 4, 5, 6, 7] // Every day
-        case "weekdays":
-            days = [2, 3, 4, 5, 6] // Monday to Friday
-        case "weekends":
-            days = [1, 7] // Sunday & Saturday
-        case let freq where freq.starts(with: "every ") && freq.contains(" days"):
-            if let days = Int(freq.components(separatedBy: " ")[1]) { // Extracts the number part
-                let nextFireDate = Calendar.current.date(byAdding: .day, value: days, to: time) ?? time
-                let nextFireComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: nextFireDate)
+                case "daily":
+                    days = [1, 2, 3, 4, 5, 6, 7]
+                case "weekdays":
+                    days = [2, 3, 4, 5, 6]
+                case "weekends":
+                    days = [1, 7]
+                case let freq where freq.starts(with: "every ") && freq.contains(" days"):
+                    if let dayInterval = Int(freq.components(separatedBy: " ")[1]) {
+                        let nextFireDate = Calendar.current.date(byAdding: .day, value: dayInterval, to: time) ?? time
+                        let nextFireComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: nextFireDate)
 
-                let trigger = UNCalendarNotificationTrigger(dateMatching: nextFireComponents, repeats: true)
+                        let content = UNMutableNotificationContent()
+                        content.title = "\(type): \(title)"
+                        content.body = body
+                        content.sound = .default
 
-                let content = UNMutableNotificationContent()
-                content.title = title
-                content.body = body
-                content.sound = UNNotificationSound.default
+                        let request = UNNotificationRequest(
+                            identifier: "every_\(dayInterval)_\(title)",
+                            content: content,
+                            trigger: UNCalendarNotificationTrigger(dateMatching: nextFireComponents, repeats: true)
+                        )
 
-                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                center.add(request) { error in
-                    if let error = error {
-                        print("❌ Error scheduling Every \(days) Days notification: \(error.localizedDescription)")
-                    } else {
-                        print("✅ Successfully scheduled Every \(days) Days notification at \(nextFireComponents.hour!):\(nextFireComponents.minute!) on \(nextFireDate)")
+                        center.add(request)
+                        print("✅ Scheduled Every \(dayInterval) Days for \(title)")
+                        return
                     }
+                case "biweekly":
+                    scheduleBiweeklyNotification(time: time, title: title, body: body)
+                    return
+                default:
+                    print("Invalid frequency: \(freq)")
+                    return
                 }
-                return
+
+                for day in days {
+                    var dateComponents = timeComponents
+                    dateComponents.weekday = day
+
+                    let content = UNMutableNotificationContent()
+                    content.title = "\(type): \(title)"
+                    content.body = body
+                    content.sound = .default
+
+                    let identifier = "weekday_\(day)_\(title)"
+
+                    let request = UNNotificationRequest(
+                        identifier: identifier,
+                        content: content,
+                        trigger: UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+                    )
+
+                    center.add(request)
+                    print("✅ Scheduled for weekday \(day) at \(timeComponents.hour!):\(timeComponents.minute!)")
+                }
             }
-        case "biweekly":
-            scheduleBiweeklyNotification(time: time, title: title, body: body)
-            return
-        default:
-            print("Invalid frequency:  \(freq)")
-            return
-        }
 
-        // Schedule notification for each selected day
-        for day in days {
-            var dateComponents = timeComponents
-            dateComponents.weekday = day
-            
-            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-
-            let content = UNMutableNotificationContent()
-            content.title = "\(type): \(title)"  // Now `type` is used in the title
-            content.body = body
-            content.sound = UNNotificationSound.default
-
-            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-            center.add(request)
-            
-            print("Scheduled \(freq) notification for weekday: \(day) at \(timeComponents.hour!):\(timeComponents.minute!)")
-        }
-    }
-    
     private func scheduleBiweeklyNotification(time: Date, title: String, body: String) {
         let center = UNUserNotificationCenter.current()
         let calendar = Calendar.current
@@ -105,43 +105,46 @@ class NotificationHandler {
         content.body = body
         content.sound = UNNotificationSound.default
 
-        let requestID = "biweekly_initial_\(title)"
-        let request = UNNotificationRequest(identifier: requestID, content: content, trigger: firstTrigger)
+        let initialID = "biweekly_initial_\(title)"
+              let request = UNNotificationRequest(
+                  identifier: initialID,
+                  content: content,
+                  trigger: UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+              )
 
-        center.add(request) { error in
-            if error == nil {
-                print("Scheduled first biweekly notification on \(time)")
-                
-                // After the first notification, set up the biweekly repeating notifications
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.scheduleRecurringBiweeklyNotification(startingFrom: time, title: title, body: body)
-                }
-            } else {
-                print("Failed to schedule first biweekly notification: \(error!.localizedDescription)")
-            }
-        }
-    }
+              center.add(request) { error in
+                  if error == nil {
+                      print("✅ Scheduled first biweekly notification for \(title)")
+                      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                          self.scheduleRecurringBiweeklyNotification(startingFrom: time, title: title, body: body)
+                      }
+                  } else {
+                      print("❌ Failed initial biweekly: \(error!.localizedDescription)")
+                  }
+              }
+          }
 
     // 🔁 **Schedules the repeating notification every 14 days after the first one**
     private func scheduleRecurringBiweeklyNotification(startingFrom lastDate: Date, title: String, body: String) {
         let center = UNUserNotificationCenter.current()
-
-        let interval: TimeInterval = 14 * 24 * 60 * 60 // 14 days in seconds
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: true)
+        let interval: TimeInterval = 14 * 24 * 60 * 60
 
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = UNNotificationSound.default
 
-        let requestID = "biweekly_recurring_\(title)"
-        let request = UNNotificationRequest(identifier: requestID, content: content, trigger: trigger)
+        let request = UNNotificationRequest(
+            identifier: "biweekly_recurring_\(title)",
+            content: content,
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: true)
+        )
 
         center.add(request) { error in
             if error == nil {
-                print("Scheduled recurring biweekly notification every 14 days after \(lastDate)")
+                print("✅ Scheduled recurring biweekly for \(title)")
             } else {
-                print(" Failed to schedule recurring biweekly notification: \(error!.localizedDescription)")
+                print("❌ Recurring biweekly failed: \(error!.localizedDescription)")
             }
         }
     }
@@ -149,27 +152,51 @@ class NotificationHandler {
     func scheduleRefillReminder(date: Date, title: String) {
         let center = UNUserNotificationCenter.current()
         let calendar = Calendar.current
-
+        
+        // 🔹 Remove existing refill for this title
+        center.removePendingNotificationRequests(withIdentifiers: ["refill_\(title)"])
+        
         var refillDateComponents = calendar.dateComponents([.year, .month, .day], from: date)
-        refillDateComponents.hour = 9  // 🔹 Schedule for 9AM
-
-        let trigger = UNCalendarNotificationTrigger(dateMatching: refillDateComponents, repeats: false)
-
+        refillDateComponents.hour = 9
+        
         let content = UNMutableNotificationContent()
         content.title = "Refill Reminder: \(title)"
         content.body = "Time to refill your medicine! Open PillMinder to set a new refill date."
-        content.sound = UNNotificationSound.default
-
-        let requestID = "refill_\(title)_\(date.timeIntervalSince1970)"
-        let request = UNNotificationRequest(identifier: requestID, content: content, trigger: trigger)
-
+        content.sound = .default
+        
+        let request = UNNotificationRequest(
+            identifier: "refill_\(title)",
+            content: content,
+            trigger: UNCalendarNotificationTrigger(dateMatching: refillDateComponents, repeats: false)
+        )
+        
         center.add(request) { error in
-            if let error = error {
-                print("❌ Error scheduling refill reminder: \(error.localizedDescription)")
+            if error == nil {
+                print("✅ Refill reminder scheduled for \(title)")
             } else {
-                print("✅ Successfully scheduled refill reminder for \(title) on \(date)")
+                print("❌ Refill failed: \(error!.localizedDescription)")
             }
         }
     }
     
+    // helper function to generate identifiers based on frequency
+    private func notificationIdentifiers(for title: String, freq: String) -> [String] {
+        switch freq.lowercased() {
+        case "daily":
+            return (1...7).map { "weekday_\($0)_\(title)" }
+        case "weekdays":
+            return (2...6).map { "weekday_\($0)_\(title)" }
+        case "weekends":
+            return [1, 7].map { "weekday_\($0)_\(title)" }
+        case let str where str.starts(with: "every ") && str.contains(" days"):
+            if let num = Int(str.components(separatedBy: " ")[1]) {
+                return ["every_\(num)_\(title)"]
+            }
+        case "biweekly":
+            return ["biweekly_initial_\(title)", "biweekly_recurring_\(title)"]
+        default:
+            return []
+        }
+        return []
+    }
 }
