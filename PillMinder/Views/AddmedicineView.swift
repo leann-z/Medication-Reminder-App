@@ -66,7 +66,7 @@ struct AddmedicineView: View {
                 Text("Add New Medicine")
                     .font(.custom(FontsManager.Avenir.heavy, size: 35))
                     .fontWeight(.semibold)
-                    .padding(.top, 10)
+                    .padding(.top, 10).foregroundColor(Color("darknavy"))
                 
                 Rectangle()
                     .frame(width: 200, height: 2)
@@ -80,11 +80,11 @@ struct AddmedicineView: View {
                         }.listRowBackground(Color.clear)
 
                         Section(header: Text("Reminder").foregroundColor(Color("darknavy"))) {
-                            Picker("Frequency", selection: $reminderFrequency) {
+                            Picker(selection: $reminderFrequency, label: Text("Frequency").foregroundColor(Color("darknavy"))) {
                                 ForEach(reminderFrequencies, id: \.self) { frequency in
                                     Text(frequency)
                                 }
-                            }
+                            }.tint(Color("darknavy"))
                             .onChange(of: reminderFrequency) { newValue in
                                 if newValue != "Every __ Days" {
                                     customDays = 2 // Reset customDays when not using "Every X Days"
@@ -97,16 +97,19 @@ struct AddmedicineView: View {
                                 }
                             }
                             
-                            DatePicker("Time", selection: $timeOfDay, displayedComponents: .hourAndMinute)
-                                .datePickerStyle(.compact)
-                        }.listRowBackground(Color.clear)
-                        
+                        DatePicker(selection: $timeOfDay, displayedComponents: .hourAndMinute) {
+                                        Text("Time").foregroundColor(Color("darknavy"))
+                                    }
+                        .datePickerStyle(.compact).accentColor(.black)
+                                }.listRowBackground(Color.clear)
                         Section {
-                            Toggle("Remind me when to refill", isOn: $remindToRefill)
-                            
+                        Toggle(isOn: $remindToRefill) {
+                                        Text("Remind me when to refill").foregroundColor(Color("darknavy"))
+                                    }
                             if remindToRefill {
-                                DatePicker("Refill Date", selection: $refillDate, displayedComponents: .date)
-                            }
+                            DatePicker("Refill Date", selection: $refillDate, displayedComponents: .date)
+                                    .foregroundColor(Color("darknavy")).accentColor(.black)
+                                        }
                         }.listRowBackground(Color.clear)
                         
                         Section {

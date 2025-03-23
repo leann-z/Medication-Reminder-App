@@ -76,7 +76,7 @@ struct EditmedicineView: View {
                 
                 Text("Edit Medicine")
                     .font(.custom(FontsManager.Avenir.heavy, size: 35))
-                    .fontWeight(.semibold)
+                    .fontWeight(.semibold).foregroundColor(Color("darknavy"))
                 
                 Rectangle()
                     .frame(width: 200, height: 2)
@@ -90,11 +90,11 @@ struct EditmedicineView: View {
                         }.listRowBackground(Color.clear)
                         
                         Section(header: Text("Reminder").foregroundColor(Color("darknavy"))) {
-                            Picker("Frequency", selection: $editedFreq) {
+                            Picker(selection: $editedFreq, label: Text("Frequency").foregroundColor(Color("darknavy"))) {
                                 ForEach(reminderFrequencies, id: \.self) { frequency in
                                     Text(frequency)
                                 }
-                            }
+                            }.tint(Color("darknavy"))
                             .onChange(of: editedFreq) { newValue in
                                 if newValue != "Every __ Days" {
                                     editedCustomDays = 2 // Reset if switching away
@@ -107,16 +107,20 @@ struct EditmedicineView: View {
                                 }
                             }
                             
-                            DatePicker("Time", selection: $editedTime, displayedComponents: .hourAndMinute)
+                            DatePicker(selection: $editedTime, displayedComponents: .hourAndMinute) {
+                                Text("Time").foregroundColor(Color("darknavy"))
+                            }
                                 .datePickerStyle(.compact)
                         }
                         .listRowBackground(Color.clear)
                         
                         Section {
-                            Toggle("Remind me when to refill", isOn: $remindToRefill)
+                            Toggle(isOn: $remindToRefill) {
+                                Text("Remind me when to refill").foregroundColor(Color("darknavy"))
+                            }
                             
                             if remindToRefill {
-                                DatePicker("Refill Date", selection: $refillDate, displayedComponents: .date)
+                                DatePicker("Refill Date", selection: $refillDate, displayedComponents: .date).foregroundColor(Color("darknavy"))
                             }
                         }.listRowBackground(Color.clear)
                         

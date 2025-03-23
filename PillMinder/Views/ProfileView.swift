@@ -32,7 +32,7 @@ struct ProfileView: View {
             ZStack {
                 Color("creme").ignoresSafeArea()
                 
-                VStack {
+                VStack(alignment: .leading) {
                     
                     HStack {
                         
@@ -42,104 +42,92 @@ struct ProfileView: View {
                             Label("", systemImage: "house").foregroundColor(.black)
                         }
                         
-                        Spacer().frame(width: 300)
-                    }
+                        Spacer()
+                    }.padding(.top, 10)
+                        .padding(.horizontal)
                     
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .frame(width: 200, height: 200)
-                        .foregroundColor(Color("beige"))
-                    
-// !!! BELOW IS THE PROFILE PICKER FUNCTIONALITY. COMMENTED OUT UNTIL THERE ARE PROFILE PICTURES MADE
-//                        .overlay(
-//                                                Button(action: {
-//                                                    isSheetPresented = true
-//                                                }, label: {
-//                                                    Image(systemName: "pencil.circle")
-//                                                        .foregroundColor(.black)
-//                                                        .font(.title)
-//                                                })
-//                                                .padding(8)
-//                                                , alignment: .bottomTrailing
-//                                            ).sheet(isPresented: $isSheetPresented, content: {
-//                                                ProfilePickerView() // Present the View when the sheet is triggered
-//                                            })
-                    
-                    
-                    Spacer().frame(height: 450)
-                }
-                
-                VStack {
-                    Text("Your Profile").font(.custom(FontsManager.Avenir.heavy, size: 35)).fontWeight(.semibold)
-                    
-                    Spacer().frame(height: 120)
-                 
-                }
-                
-                VStack {
-                    
-                    Spacer().frame(height: 400)
-                    
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10) // Rounded Rectangle with corner radius
-                            .foregroundColor(Color("lightnavy")) // Background color for the rounded rectangle
-                        
-                        VStack {
-                            
-                            
-                            Text("Active Medication").font(.custom(FontsManager.Avenir.heavy, size: 17))
-                            
-                            let activeMedication = shelvesviewModel.items.count
-                            
-                            Text("\(activeMedication)")
-                        }
-                        .padding() // Add some padding around the text
-                        .foregroundColor(.white)
-                    }.padding()
-                    
-                    
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10) // Rounded Rectangle with corner radius
-                            .foregroundColor(Color("lightnavy")) // Background color for the rounded rectangle
-                        
-                        VStack {
-                            
-                            
-                            Text("Achievements").font(.custom(FontsManager.Avenir.heavy, size: 17))
-                            
-                            Text("Coming soon!")
-                        }
-                        .padding() // Add some padding around the text
-                        .foregroundColor(.white)
-                    }.padding()
-                    Spacer().frame(height: 80)
-                    
-                    Button(action: {
-                         
-                        Task {
-                            do {
-                                try viewModel.logOut()
-                                UserDefaults.standard.set(false, forKey: "IsUserSignedIn") // Set it to false after logging out
-                                
-                                print("success")
-                            } catch {
-                                print("error")
+        // Profile image
+                            VStack {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .frame(width: 200, height: 200)
+                                    .foregroundColor(Color("beige"))
+
+                                Text("Your Profile")
+                                    .font(.custom(FontsManager.Avenir.heavy, size: 35))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color("darknavy"))
+
+                               
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 30)
+
+                            //Spacer()
+
+                            // Info boxes
+                    VStack(spacing: 16) {
+                        HStack {
+                            Spacer()
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundColor(Color("lightnavy"))
+                                .frame(width: 280, height: 80)
+                                .overlay(
+                                    VStack {
+                                        Text("Active Medication")
+                                            .font(.custom(FontsManager.Avenir.heavy, size: 17))
+                                        Text("\(shelvesviewModel.items.count)")
+                                    }
+                                    .foregroundColor(.white)
+                                )
+                            Spacer()
                         }
-                       
-                        
-                        
-                    }, label: {
-                        Text("Log Out").font(.custom(FontsManager.Avenir.regular, size: 17)).foregroundColor(.red).underline()
-                    })
-                    
-                    Spacer().frame(height: 80)
+
+                        HStack {
+                            Spacer()
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundColor(Color("lightnavy"))
+                                .frame(width: 280, height: 80)
+                                .overlay(
+                                    VStack {
+                                        Text("Achievements")
+                                            .font(.custom(FontsManager.Avenir.heavy, size: 17))
+                                        Text("Coming soon!")
+                                    }
+                                    .foregroundColor(.white)
+                                )
+                            Spacer()
+                        }
+                    }
+                            .padding(.horizontal)
+
+                            Spacer()
+
+                            // Log Out
+                            Button(action: {
+                                Task {
+                                    do {
+                                        try viewModel.logOut()
+                                        UserDefaults.standard.set(false, forKey: "IsUserSignedIn")
+                                        print("success")
+                                    } catch {
+                                        print("error")
+                                    }
+                                }
+                            }) {
+                                Text("Log Out")
+                                    .font(.custom(FontsManager.Avenir.regular, size: 17))
+                                    .foregroundColor(.red)
+                                    .underline()
+                            }
+                            .padding(.bottom, 40)
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .navigationBarHidden(true)
                 }
             }
-            
         }
-    }
-}
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {

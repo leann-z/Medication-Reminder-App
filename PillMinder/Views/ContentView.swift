@@ -82,7 +82,7 @@ struct ContentView: View {
                 
                 Color("creme").ignoresSafeArea() // background color
                 
-                Image("pills") //background image
+                Image("pillsbg") //background image
                     .scaledToFill()
                     .edgesIgnoringSafeArea(.all)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
