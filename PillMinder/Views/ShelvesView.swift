@@ -13,14 +13,15 @@ struct ShelvesView: View {
     @EnvironmentObject var shelvesviewModel: ShelvesviewModel
     @GestureState private var isLongPressing = false
     
-    @State private var showEditMedicineView = false // 🔹 State for showing sheet
+    @State private var showEditMedicineView = false // State for showing sheet
    
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            Capsule()
                 .fill(item.color)
                 .frame(width: 150, height: 150)
-                .overlay(Text(item.name).font(.custom(FontsManager.Avenir.regular, size: 30)))
+                .overlay(Text(item.name).font(.custom(FontsManager.Avenir.regular, size: 30)).foregroundColor(Color("darknavy"))  .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8))
                 .contextMenu {
                     Button(action: {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
@@ -33,7 +34,7 @@ struct ShelvesView: View {
                         Label("Delete", systemImage: "trash")
                     }
                     Button(action: {
-                        self.showEditMedicineView = true // 🔹 Open Edit View in a sheet
+                        self.showEditMedicineView = true // Open Edit View in a sheet
                     }) {
                         HStack {
                             Text("Edit")

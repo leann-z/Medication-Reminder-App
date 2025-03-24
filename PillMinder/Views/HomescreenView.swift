@@ -11,105 +11,85 @@ import Firebase
 import GoogleSignIn
 
 struct HomescreenView: View {
-     
-    @EnvironmentObject var shelvesviewModel: ShelvesviewModel
     
+    @EnvironmentObject var shelvesviewModel: ShelvesviewModel
     var name = Auth.auth().currentUser?.displayName
     
     let isUserSignedIn = Binding<Bool>(
-                get: { false }, // Set the initial value to false for the preview
-                set: { _ in }
-            )
-
-    @State private var showAddMedicine = false // 🔹 State for sheet presentation
-  
+        get: { false },
+        set: { _ in }
+    )
+    
+    @State private var showAddMedicine = false
+    
     var body: some View {
-       
         NavigationView {
             ZStack {
                 Color("creme").ignoresSafeArea()
                 
-                VStack {
+                VStack(alignment: .leading, spacing: 10) {
                     
                     HStack {
-                       
-                        Spacer().frame(width: 300)
-                        
-                        NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) { // Wrap the Image with NavigationLink
+                        Spacer()
+                        NavigationLink(destination: ProfileView().navigationBarBackButtonHidden(true)) {
                             Image(systemName: "person.circle.fill")
                                 .resizable()
                                 .frame(width: 50, height: 50)
                                 .foregroundColor(Color("beige"))
+                                .padding(.trailing)
                         }
                     }
                     
-                    Text("Hi! 👋")
-                        .fontWeight(.heavy)
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                        .padding()
-                        .font(.custom(FontsManager.Avenir.heavy, size: 40))
-                        .padding(.bottom, -20)
-                        .foregroundColor(Color("darknavy"))
-                    
-                    Text("Welcome to PillMinder!")
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                        .padding()
-                        .foregroundColor(.gray)
-                        .font(.custom(FontsManager.Avenir.light, size: 16))
-                    
-                    Spacer().frame(height: 550)
-                    
-                }
-                
-                VStack {
-                    
-                    Spacer().frame(height: 90)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Hi! 👋")
+                            .font(.custom(FontsManager.Avenir.heavy, size: 40))
+                            .fontWeight(.heavy)
+                            .foregroundColor(Color("darknavy"))
+                        
+                        Text("Welcome to PillMinder!")
+                            .font(.custom(FontsManager.Avenir.light, size: 16))
+                            .foregroundColor(.gray)
+                            .padding(.top, 4)
+                    }
+                    .padding(.horizontal)
                     
                     VStack {
-                        HStack(spacing: -10) {
-                            Group {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 0) {
                                 Text("Your")
-                                    .padding(.leading, 20)
+                                    .font(.custom(FontsManager.Avenir.light, size: 28))
                                     .foregroundColor(Color("darknavy"))
+                                
                                 Text("Medicine")
-                                    .fontWeight(.bold)
-                                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                                    .padding()
+                                    .font(.custom(FontsManager.Avenir.heavy, size: 28))
                                     .foregroundColor(Color("darknavy"))
                             }
-                            .font(.custom(FontsManager.Avenir.light, size: 28))
+                            .padding(.leading)
                             
                             Spacer()
                             
-                            // 🔹 Changed NavigationLink to a Button that triggers a sheet
                             Button(action: { showAddMedicine = true }) {
                                 Image(systemName: "plus")
-                                    .background(Color("beige"))
-                                    .font(.largeTitle)
-                                    .cornerRadius(15)
-                                    .padding(20)
-                                    .padding(.trailing, 40)
+                                    .font(.title)
                                     .foregroundColor(.white)
+                                    .padding()
+                                    .background(Circle().fill(Color("beige")))
                             }
-                            
+                            .padding(.trailing)
                         }
-                        .padding(.top, 80)
-                    }
+                        .padding(.top)
                         
-                    VStack {
-                        if (shelvesviewModel.items.isEmpty) {
+                        if shelvesviewModel.items.isEmpty {
+                            Spacer()
                             Text("No medicine to remind you to take yet... click + now!")
-                                .font(.custom(FontsManager.Avenir.heavy, size: 30))
+                                .font(.custom(FontsManager.Avenir.heavy, size: 24))
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(Color("darknavy"))
                                 .padding()
-                                .padding()
-                                .padding()
-                                .fontWidth(.condensed)
                             Spacer()
                         } else {
                             ScrollView {
-                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                     ForEach(shelvesviewModel.items) { item in
                                         ShelvesView(item: item)
                                     }
@@ -118,7 +98,9 @@ struct HomescreenView: View {
                             }
                         }
                     }
-                
+                    .padding(.top, 10)
+                    
+                    Spacer()
                 }
             }
         }
