@@ -14,6 +14,16 @@
 				<string>com.googleusercontent.apps.948945469487-284t9ho2vrft97l09rqaqsrmfpkbc7fd</string>
 			</array>
 		</dict>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>None</string>
+            <key>CFBundleURLName</key>
+            <string>com.pillminder.PillMinder</string> <!-- app’s bundle ID -->
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.pillminder.PillMinder</string>
+            </array>
+        </dict>
 	</array>
 	<key>GIDClientID</key>
 	<string>948945469487-284t9ho2vrft97l09rqaqsrmfpkbc7fd.apps.googleusercontent.com</string>
